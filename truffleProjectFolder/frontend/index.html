@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>frontend</title>
+        <meta charset="UTF-8"/>
+        <script src="https://unpkg.com/@metamask/legacy-web3@latest/dist/metamask.web3.min.js"></script>
+    </head>
+    <body>
+        <script>
+
+            window.onload = function () {
+                // check to see if user has metamask addon installed on his browser
+                if (typeof web3 === 'undefined') {
+                    document.getElementById('metamask').innerHTML = "You need <a href='https://metamask.io/'>MetaMask</a> browser plugin to run this example";
+                }
+                // call the getvalue function here
+                getvalue();
+            }
+
+            function getvalue() {
+                var abi = [
+                    {
+                        "inputs": [
+                            {
+                                "internalType": "uint256",
+                                "name": "x",
+                                "type": "uint256"
+                            }
+                        ],
+                        "name": "set",
+                        "outputs": [],
+                        "stateMutability": "nonpayable",
+                        "type": "function"
+                    },
+                    {
+                        "inputs": [],
+                        "name": "get",
+                        "outputs": [
+                            {
+                                "internalType": "uint256",
+                                "name": "",
+                                "type": "uint256"
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "type": "function",
+                        "constant": true
+                    }
+                ];
+                try {
+                    //contract address. please change the address to your own
+                    var contractaddress = "0x9177A5A409d89eC1d32b3cd40D57CF07e3D4897c";
+                    //instantiate and connect to contract address via Abi
+                    var myAbi = web3.eth.contract(abi);
+                    var myfunction = myAbi.at(contractaddress);
+                    //call the get function of our SimpleStorage contract
+                    myfunction.get.call(function (err, xname) {
+                        if (err) { console.log(err) }
+                        if (xname) {
+                            //display value on the webpage
+                            document.getElementById("xbalance").innerHTML = "last inserted value into the blockchain is :"+xname;
+                        }
+                    });
+                } catch (err) {
+                    document.getElementById("xbalance").innerHTML = err;
+                }
+            }
+
+            function setvalue() {
+                var abi = [
+                    {
+                        "inputs": [
+                            {
+                                "internalType": "uint256",
+                                "name": "x",
+                                "type": "uint256"
+                            }
+                        ],
+                        "name": "set",
+                        "outputs": [],
+                        "stateMutability": "nonpayable",
+                        "type": "function"
+                    },
+                    {
+                        "inputs": [],
+                        "name": "get",
+                        "outputs": [
+                            {
+                                "internalType": "uint256",
+                                "name": "",
+                                "type": "uint256"
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "type": "function",
+                        "constant": true
+                    }
+                ];
+                try {
+                    //contract address. please change the address to your own
+                    var contractaddress = "0x9177A5A409d89eC1d32b3cd40D57CF07e3D4897c";
+                    //instantiate and connect to contract address via Abi
+                    var myAbi = web3.eth.contract(abi);
+                    var myFunction= myAbi.at(contractaddress);
+                    //call the set function of our SimpleStorage contract
+                    myFunction.set.sendTransaction(document.getElementById("xvalue").value, {
+                        from: web3.eth.accounts[0], gas: 4000000
+                    }, function (error, result) {
+                        if (!error) {
+                            console.log(result);
+                        } else {
+                            console.log(error);
+                        }
+                    });
+                } catch (err) {
+                    document.getElementById("xvalue").innerHTML = err;
+                }
+            }
+
+        </script>
+        <center>
+            <div id="metamask"></div>
+            <h3>Insert and retrieve value on the blockchain</h3>
+            <br />
+            <table>
+                <tr>
+                    <td></td>
+                    <td>
+                        <div id="xbalance"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Insert a new value :</td>
+                    <td>
+                        <input id="xvalue" type="text"/>
+                        <input id="Button1" type="button" onclick="setvalue()" value="Add to Blockchain"/>
+                    </td>
+                </tr>
+            </table>
+        </center>
+    </body>
+</html>
